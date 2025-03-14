@@ -1,0 +1,53 @@
+version: '3.8'
+
+services:
+  # Frontend React service
+  frontend:
+    build: ./frontend
+    container_name: web-analyzer-frontend
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    environment:
+      - REACT_APP_API_BASE_URL=http://localhost:8080/api
+      - REACT_APP_KEYCLOAK_URL=http://localhost:8090/auth
+      - REACT_APP_KEYCLOAK_REALM=web-analyzer
+      - REACT_APP_KEYCLOAK_CLIENT_ID=web-analyzer-frontend
+    depends_on:
+      - backend
+      - keycloak
+    networks:
+      - web-analyzer-network
+
+  # Keycloak service
+  keycloak:
+    image: quay.io/keycloak/keycloak:21.1.1
+    container_name: web-analyzer-keycloak
+    restart: unless-stopped
+    ports:
+      - "8090:8080"
+    environment:
+      - KEYCLOAK_ADMIN=admin
+      - KEYCLOAK_ADMIN_PASSWORD=admin
+      - KC_DB=postgres
+      - KC_DB_URL=jdbc:postgresql://postgres:5432/keycloak
+      - KC_DB_USERNAME=keycloak
+      - KC_DB_PASSWORD=keycloak
+      - KC_HOSTNAME_STRICT=false
+      - KC_HTTP_RELATIVE_PATH=/auth
+    command:
+      - start-dev
+    depends_on:
+      - postgres
+    networks:
+      - web-analyzer-network
+
+networks:
+  web-analyzer-network:
+    driver: bridge
+
+volumes:
+  mongo-data:
+    driver: local
+  postgres-data:
+    driver: local
