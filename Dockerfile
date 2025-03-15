@@ -1,3 +1,4 @@
+# frontend/Dockerfile
 # Build stage
 FROM node:18-alpine AS build
 
@@ -13,20 +14,20 @@ RUN npm ci
 # Copy all files
 COPY . .
 
-# Set the API base URL for production
-ENV REACT_APP_API_BASE_URL=http://backend:8080/api
-
 # Build the application
 RUN npm run build
 
 # Runtime stage
 FROM nginx:alpine
 
-# Copy the built app to nginx
+# Copy custom nginx config
+COPY nginx/nginx.conf /etc/nginx/conf.d/default.conf
+
+# Copy the built app from the build stage
 COPY --from=build /app/build /usr/share/nginx/html
 
-# Copy custom nginx config if needed
-# COPY nginx.conf /etc/nginx/conf.d/default.conf
+# Create a simple error page
+RUN echo "<html><body><h1>Server Error</h1><p>Sorry, something went wrong.</p></body></html>" > /usr/share/nginx/html/error.html
 
 # Expose port 80
 EXPOSE 80
