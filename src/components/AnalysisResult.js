@@ -1,11 +1,23 @@
-import React from 'react';
-import { FaLink, FaFileCode, FaFont, FaHeading, FaExternalLinkAlt, FaLink as FaInternalLink, FaSignInAlt } from 'react-icons/fa';
+import React, { useState } from 'react';
+import { FaLink, FaFileCode, FaFont, FaHeading, FaExternalLinkAlt, FaLink as FaInternalLink, FaSignInAlt, FaSearchPlus } from 'react-icons/fa';
 import moment from 'moment';
+import DeepAnalysisModal from './DeepAnalysisModal';
 
 const AnalysisResult = ({ result }) => {
+    const [showDeepAnalysisModal, setShowDeepAnalysisModal] = useState(false);
+
     if (!result) {
         return <div className="text-center text-secondary-500">No result available</div>;
     }
+
+    const handleOpenDeepAnalysis = () => {
+        console.log("Opening deep analysis modal for:", result.id);
+        setShowDeepAnalysisModal(true);
+    };
+
+    const handleCloseDeepAnalysis = () => {
+        setShowDeepAnalysisModal(false);
+    };
 
     return (
         <div className="space-y-6">
@@ -16,11 +28,20 @@ const AnalysisResult = ({ result }) => {
                         {result.url}
                     </h2>
                 </div>
-                {result.created_at && (
-                    <div className="text-sm text-secondary-500">
-                        Analyzed {moment(result.created_at).fromNow()}
-                    </div>
-                )}
+                <div className="flex items-center space-x-3">
+                    {result.created_at && (
+                        <div className="text-sm text-secondary-500">
+                            Analyzed {moment(result.created_at).fromNow()}
+                        </div>
+                    )}
+                    <button
+                        onClick={handleOpenDeepAnalysis}
+                        className="flex items-center bg-primary-600 hover:bg-primary-700 text-white py-1 px-3 rounded-md transition"
+                    >
+                        <FaSearchPlus className="mr-1" />
+                        <span>Deep Analysis</span>
+                    </button>
+                </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -49,7 +70,7 @@ const AnalysisResult = ({ result }) => {
                         <h3 className="text-lg font-medium text-secondary-800">Headings</h3>
                     </div>
                     <div className="grid grid-cols-3 gap-2">
-                        {['h1', 'h2', 'h3', 'h4', 'h5', 'h6'].map((heading, index) => (
+                        {['h1', 'h2', 'h3', 'h4', 'h5', 'h6'].map((heading) => (
                             <div key={heading} className="text-center p-2 bg-white rounded border border-secondary-200">
                                 <div className="font-semibold text-secondary-800">{heading.toUpperCase()}</div>
                                 <div className="text-xl text-primary-600">
@@ -113,6 +134,16 @@ const AnalysisResult = ({ result }) => {
                     </p>
                 </div>
             </div>
+
+            {/* Deep Analysis Modal */}
+            {showDeepAnalysisModal && (
+                <DeepAnalysisModal
+                    isOpen={showDeepAnalysisModal}
+                    onClose={handleCloseDeepAnalysis}
+                    url={result.url}
+                    analysisId={result.id}
+                />
+            )}
         </div>
     );
 };

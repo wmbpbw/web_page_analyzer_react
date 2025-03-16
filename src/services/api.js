@@ -2,7 +2,7 @@ import axios from 'axios';
 import keycloak from '../config/keycloak';
 
 // Get API base URL from environment variables or default to localhost
-const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:9090/api';
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8080/api';
 
 // Create axios instance with common configuration
 const apiClient = axios.create({
@@ -107,12 +107,22 @@ const apiService = {
         }
     },
 
-    // Get current user's analyses
+    // Get user's analyses
     getUserAnalyses: async (limit = 10) => {
         try {
             const response = await apiClient.get('/user/analyses', {
                 params: { limit },
             });
+            return response.data;
+        } catch (error) {
+            throw error;
+        }
+    },
+
+    // Get deep analysis data
+    getDeepAnalysis: async (analysisId) => {
+        try {
+            const response = await apiClient.get(`/analysis/${analysisId}/deep`);
             return response.data;
         } catch (error) {
             throw error;
