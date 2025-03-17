@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { FaLink, FaFileCode, FaFont, FaHeading, FaExternalLinkAlt, FaLink as FaInternalLink, FaSignInAlt, FaSearchPlus } from 'react-icons/fa';
+import { FaLink, FaFileCode, FaFont, FaHeading, FaExternalLinkAlt, FaLink as FaInternalLink, FaSignInAlt, FaSearchPlus, FaExternalLinkSquareAlt } from 'react-icons/fa';
 import moment from 'moment';
 import DeepAnalysisModal from './DeepAnalysisModal';
 
@@ -21,29 +21,47 @@ const AnalysisResult = ({ result }) => {
 
     return (
         <div className="space-y-6">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-secondary-200">
-                <div className="flex items-center mb-2 sm:mb-0">
-                    <FaLink className="text-primary-600 mr-2" />
-                    <h2 className="text-xl font-semibold text-secondary-800 truncate">
-                        {result.url}
-                    </h2>
+            {/* Header Section with URL and Timestamp */}
+            <div className="pb-4 border-b border-secondary-200">
+                {/* URL Display with Visit Website Link */}
+                <div className="flex items-start mb-3">
+                    <FaLink className="text-primary-600 mr-2 flex-shrink-0 mt-1" />
+                    <div>
+                        {<h2 className="text-xl font-semibold text-secondary-800 break-all">
+                            {result.url}
+                        </h2>}
+                        {/*<a
+                            href={result.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center text-primary-600 hover:text-primary-700 mt-1"
+                        >
+                            <FaExternalLinkSquareAlt className="mr-1" />
+                            <span>Visit Website</span>
+                        </a>*/}
+                    </div>
                 </div>
-                <div className="flex items-center space-x-3">
-                    {result.created_at && (
-                        <div className="text-sm text-secondary-500">
-                            Analyzed {moment(result.created_at).fromNow()}
-                        </div>
-                    )}
+
+                {/* Timestamp and Deep Analysis Button */}
+                <div className="flex flex-wrap items-center justify-between">
+                    <div className="text-sm text-secondary-500 mr-4">
+                        {result.created_at ? (
+                            <span>Analyzed {moment(result.created_at).fromNow()}</span>
+                        ) : (
+                            <span>Analyzed a few seconds ago</span>
+                        )}
+                    </div>
                     <button
                         onClick={handleOpenDeepAnalysis}
-                        className="flex items-center bg-primary-600 hover:bg-primary-700 text-white py-1 px-3 rounded-md transition"
+                        className="flex items-center bg-primary-600 hover:bg-primary-700 text-white py-2 px-4 rounded-md transition mt-2 sm:mt-0"
                     >
-                        <FaSearchPlus className="mr-1" />
+                        <FaSearchPlus className="mr-2" />
                         <span>Deep Analysis</span>
                     </button>
                 </div>
             </div>
 
+            {/* Analysis Results Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {/* HTML Version */}
                 <div className="bg-secondary-50 p-4 rounded-lg">
