@@ -1,7 +1,7 @@
 import React from 'react';
 import { useQuery } from 'react-query';
 import { Link } from 'react-router-dom';
-import { FaHistory, FaLink, FaExternalLinkAlt, FaCalendarAlt } from 'react-icons/fa';
+import { FaHistory, FaLink, FaExternalLinkAlt, FaCalendarAlt, FaSync } from 'react-icons/fa';
 import apiService from '../services/api';
 import Spinner from '../components/Spinner';
 import ErrorMessage from '../components/ErrorMessage';
@@ -21,17 +21,22 @@ const HistoryPage = () => {
     const hasNoData = !isLoading && !isError && (!data || !data.analyses || data.analyses.length === 0);
 
     return (
-        <div className="max-w-4xl mx-auto">
-            <div className="flex items-center justify-between mb-6">
+        <div className="max-w-4xl mx-auto py-6">
+            {/* Header Section */}
+            <div className="mb-6">
                 <div className="flex items-center">
-                    <FaHistory className="text-primary-600 mr-2 text-xl" />
+                    <FaHistory className="text-primary-600 mr-3 text-2xl" />
                     <h1 className="text-2xl font-bold text-secondary-800">Analysis History</h1>
                 </div>
+            </div>
 
+            {/* Refresh Button - Separated from header */}
+            <div className="flex justify-end mb-6">
                 <button
                     onClick={() => refetch()}
-                    className="bg-primary-100 text-primary-700 px-4 py-2 rounded-lg font-medium hover:bg-primary-200 transition"
+                    className="flex items-center bg-primary-100 text-primary-700 px-4 py-2 rounded-lg font-medium hover:bg-primary-200 transition"
                 >
+                    <FaSync className="mr-2" />
                     Refresh
                 </button>
             </div>
@@ -61,53 +66,67 @@ const HistoryPage = () => {
                     </Link>
                 </div>
             ) : (
-                <div className="bg-white rounded-lg shadow-md overflow-hidden">
-                    <ul className="divide-y divide-secondary-200">
+                <div className="bg-white rounded-lg shadow-md overflow-hidden mb-8">
+                    {/* Data Table */}
+                    <table className="min-w-full">
+                        <thead className="bg-blue-50 border-b border-blue-100">
+                        <tr>
+                            <th scope="col" className="px-6 py-4 text-left text-sm font-medium text-secondary-600 uppercase tracking-wider">
+                                URL
+                            </th>
+                            <th scope="col" className="px-6 py-4 text-left text-sm font-medium text-secondary-600 uppercase tracking-wider">
+                                Date
+                            </th>
+                            <th scope="col" className="px-6 py-4 text-center text-sm font-medium text-secondary-600 uppercase tracking-wider">
+                                HTML Version
+                            </th>
+                            <th scope="col" className="px-6 py-4 text-center text-sm font-medium text-secondary-600 uppercase tracking-wider">
+                                Links
+                            </th>
+                            <th scope="col" className="px-6 py-4 text-center text-sm font-medium text-secondary-600 uppercase tracking-wider">
+                                Details
+                            </th>
+                        </tr>
+                        </thead>
+                        <tbody className="bg-white divide-y divide-gray-100">
                         {data.analyses.map((analysis) => (
-                            <li key={analysis.id}>
-                                <Link
-                                    to={`/analysis/${analysis.id}`}
-                                    className="block hover:bg-secondary-50 p-4 transition"
-                                >
-                                    <div className="flex flex-col sm:flex-row sm:items-center justify-between">
-                                        <div className="mb-2 sm:mb-0">
-                                            <div className="flex items-center">
-                                                <FaLink className="text-primary-500 mr-2" />
-                                                <h3 className="font-medium text-secondary-800 truncate" style={{ maxWidth: '400px' }}>
-                                                    {analysis.url}
-                                                </h3>
-                                            </div>
-
-                                            <div className="flex items-center mt-1 text-sm text-secondary-500">
-                                                <FaCalendarAlt className="mr-1" />
-                                                <span>{moment(analysis.created_at).format('MMM D, YYYY [at] h:mm A')}</span>
-                                            </div>
-                                        </div>
-
-                                        <div className="flex items-center space-x-6">
-                                            <div className="text-center">
-                                                <div className="text-xs text-secondary-500 mb-1">HTML</div>
-                                                <div className="font-medium text-secondary-700">
-                                                    {analysis.html_version || 'Unknown'}
-                                                </div>
-                                            </div>
-
-                                            <div className="text-center">
-                                                <div className="text-xs text-secondary-500 mb-1">Links</div>
-                                                <div className="font-medium text-secondary-700">
-                                                    {(analysis.internal_links?.count || 0) + (analysis.external_links?.count || 0)}
-                                                </div>
-                                            </div>
-
-                                            <div className="hidden sm:block text-primary-600">
-                                                <FaExternalLinkAlt />
-                                            </div>
-                                        </div>
+                            <tr key={analysis.id} className="hover:bg-gray-50 transition">
+                                <td className="px-6 py-4 whitespace-nowrap border-b border-gray-100">
+                                    <div className="flex items-center">
+                                        <FaLink className="text-primary-500 mr-2 flex-shrink-0" />
+                                        <span className="text-secondary-800 truncate" style={{ maxWidth: '250px' }}>
+                                                {analysis.url}
+                                            </span>
                                     </div>
-                                </Link>
-                            </li>
+                                </td>
+                                <td className="px-6 py-4 whitespace-nowrap border-b border-gray-100">
+                                    <div className="flex items-center text-sm text-secondary-500">
+                                        <FaCalendarAlt className="mr-1 flex-shrink-0" />
+                                        <span>{moment(analysis.created_at).format('MMM D, YYYY [at] h:mm A')}</span>
+                                    </div>
+                                </td>
+                                <td className="px-6 py-4 whitespace-nowrap text-center border-b border-gray-100">
+                                        <span className="px-2 py-1 text-xs font-medium rounded-full bg-secondary-100 text-secondary-800">
+                                            {analysis.html_version || 'Unknown'}
+                                        </span>
+                                </td>
+                                <td className="px-6 py-4 whitespace-nowrap text-center border-b border-gray-100">
+                                        <span className="font-medium text-secondary-700">
+                                            {(analysis.internal_links?.count || 0) + (analysis.external_links?.count || 0)}
+                                        </span>
+                                </td>
+                                <td className="px-6 py-4 whitespace-nowrap text-center border-b border-gray-100">
+                                    <Link
+                                        to={`/analysis/${analysis.id}`}
+                                        className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-primary-50 text-primary-600 hover:bg-primary-100 hover:text-primary-800 transition"
+                                    >
+                                        <FaExternalLinkAlt />
+                                    </Link>
+                                </td>
+                            </tr>
                         ))}
-                    </ul>
+                        </tbody>
+                    </table>
                 </div>
             )}
         </div>
