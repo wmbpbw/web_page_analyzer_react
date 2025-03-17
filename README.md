@@ -9,7 +9,7 @@ Get the  front-end source from below two repository.
 
 
 •
-Execute below command on GO Backend project root location.
+Execute below command on REACT app root location.
 
 **docker-compose up -d**
 
