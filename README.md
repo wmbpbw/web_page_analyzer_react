@@ -2,9 +2,13 @@
 **Before deploying REACT front-end app make sure you have followed all the instructions given in the go backend project README file
 and make sure all services are deployed and runnig properly.**
 
-Get the  front-end source from below two repository.
+Clone the project using below command
 
-**_https://github.com/wmbpbw/web_page_analyzer_react_**
+git clone https://github.com/wmbpbw/web_page_analyzer_react.git
+
+Change your directory to project root path 
+
+**cd \web_page_analyzer**
 
 
 
